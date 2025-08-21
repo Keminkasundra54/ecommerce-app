@@ -1,5 +1,5 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 
@@ -22,11 +22,14 @@ export default function UsersPage() {
 
   const { data, isLoading } = useQuery({
     queryKey,
-    queryFn: () => apiFetch<{ total:number; page:number; pageSize:number; items:User[] }>(
-      `/users?${q ? `q=${encodeURIComponent(q)}&` : ''}page=${page}&limit=${limit}`
-    ),
-    keepPreviousData: true,
+    queryFn: () =>
+      apiFetch<{ total:number; page:number; pageSize:number; items:User[] }>(
+        `/users?${q ? `q=${encodeURIComponent(q)}&` : ''}page=${page}&limit=${limit}`
+      ),
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
   });
+
 
   const total = data?.total || 0;
   const pageSize = data?.pageSize || limit;

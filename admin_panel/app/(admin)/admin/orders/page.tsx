@@ -1,9 +1,10 @@
 'use client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { useMemo, useState, useCallback } from 'react';
 import { apiFetch } from '@/lib/api';
 import Modal from '@/components/Modal';              // ← reuse the Modal we already have
 import OrderDetails, { OrderFull } from '@/components/OrderDetails';
+
 
 type OrderItem = { name: string; quantity: number };
 type OrderRow = {
@@ -35,10 +36,12 @@ export default function OrdersPage() {
 
   const { data, isLoading } = useQuery({
     queryKey,
-    queryFn: () => apiFetch<{ total: number; page: number; pageSize: number; items: OrderRow[] }>(
-      `/orders?${status ? `status=${status}&` : ''}page=${page}&limit=${limit}`
-    ),
-    keepPreviousData: true,
+    queryFn: () =>
+      apiFetch<{ total: number; page: number; pageSize: number; items: OrderRow[] }>(
+        `/orders?${status ? `status=${status}&` : ''}page=${page}&limit=${limit}`
+      ),
+    placeholderData: keepPreviousData,  // ⬅️ v5 way
+    staleTime: 30_000,                  // optional: treat data fresh for 30s
   });
 
   const patchMutation = useMutation({
