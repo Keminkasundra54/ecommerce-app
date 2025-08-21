@@ -35,6 +35,7 @@ const ALLOWED_ORIGINS = [
 const corsOptions = {
   origin(origin, cb) {
     // allow same-origin / curl / server-side calls with no Origin header
+    console.log('CORS Origin:', origin);
     if (!origin) return cb(null, true);
     if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
     return cb(new Error(`CORS: origin not allowed -> ${origin}`), false);
