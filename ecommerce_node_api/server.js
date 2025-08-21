@@ -23,14 +23,7 @@ const whitelist = [
   'http://localhost:3000', // Next.js
   'http://localhost:8081', // Metro dev server (some RN tooling sends this Origin)
 ];
-app.use(cors({
-  origin(origin, cb) {
-    if (!origin) return cb(null, true);            // allow mobile apps / curl (no Origin)
-    if (whitelist.includes(origin)) return cb(null, true);
-    return cb(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-}));
+app.use(cors())
 
 app.use(
   helmet({
