@@ -19,20 +19,43 @@ const app = express();
 const UPLOAD_DIR = path.join(__dirname, 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-const whitelist = [
-  'http://localhost:3000', // Next.js
-  'http://localhost:8081', // Metro dev server (some RN tooling sends this Origin)
-];
-app.use(cors())
 
+// If you will ever set cookies behind a proxy (Nginx), keep this:
+app.set('trust proxy', 1);
+
+// Allow only your known frontends (add more if needed)
+const ALLOWED_ORIGINS = [
+  'http://157.245.104.196:3000', // Next.js admin (your frontend)
+  'http://localhost:3000',       // local admin (dev)
+  'http://localhost:8081',       // Expo/RN web (dev)
+  'http://127.0.0.1:8081',
+];
+
+// CORS options with dynamic origin check
+const corsOptions = {
+  origin(origin, cb) {
+    // allow same-origin / curl / server-side calls with no Origin header
+    if (!origin) return cb(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    return cb(new Error(`CORS: origin not allowed -> ${origin}`), false);
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // IMPORTANT if you send cookies or use withCredentials=true
+};
+
+// Handle preflight early (especially important if you use multer or other middlewares)
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
+
+/* --- Helmet (relaxed cross-origin policies) --- */
 app.use(
   helmet({
-    crossOriginResourcePolicy: { policy: 'cross-origin' }, // let others display your /uploads images
-    crossOriginEmbedderPolicy: false,                       // dev-friendly; avoids COEP issues
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
     crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
   })
 );
-
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('dev'));
 
