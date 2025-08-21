@@ -14,7 +14,11 @@ const subCategoryRoutes = require('./routes/subcategories');
 const productRoutes = require('./routes/products');
 
 const app = express();
-
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  console.log('🌍 Incoming request origin:', origin, '→', req.method, req.url);
+  next();
+});
 // --- Paths ---
 const UPLOAD_DIR = path.join(__dirname, 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
