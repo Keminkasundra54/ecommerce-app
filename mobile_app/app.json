@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "RN Ecom",
+    "slug": "rn-ecom-app",
+    "scheme": "rnecom",
+    "orientation": "portrait",
+    "icon": "./src/assets/logo1.png",
+    "splash": {
+      "image": "./src/assets/logo1.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/logo1.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.keminkasundra.rnecomapp"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [],
+    "extra": {
+      "eas": {
+        "projectId": "3ce1d525-351e-412e-8222-bb6b4da34ace"
+      }
+    }
+  }
+}

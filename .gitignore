@@ -1,0 +1,4 @@
+admin_panel/.next/*
+/admin_panel/.next/*
+*/node_modules/*
+/admin_panel/node_modules/*
